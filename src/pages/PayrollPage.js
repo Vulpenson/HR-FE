@@ -10,13 +10,14 @@ import {
     FormControl,
     InputLabel,
     Select,
-    MenuItem
+    MenuItem, Button
 } from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import {format, parseISO} from "date-fns";
 import { useUser } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
 
 const PayrollPage = () => {
     const [payrolls, setPayrolls] = useState([]);
@@ -26,6 +27,7 @@ const PayrollPage = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [chartRange, setChartRange] = useState(6);
     const theme = useTheme();
+    const navigate = useNavigate();
     const { user } = useUser();
 
     const fullName = user ? `${user.firstName} ${user.lastName}` : "User";
@@ -46,7 +48,6 @@ const PayrollPage = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            console.log(res.data);
             setPayrolls(res.data.content);
             setTotalPages(res.data.totalPages);
             setLoading(false);
@@ -77,26 +78,38 @@ const PayrollPage = () => {
         setChartRange(event.target.value);
     };
 
+    const handleNavigateToHRPage = () => {
+        navigate('/hr-payrolls');
+    };
+
     return (
         <Box sx={{ display: 'flex' }}>
             <Navbar />
             <Sidebar />
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                <div style={{ height: theme.mixins.toolbar.minHeight }} />
+            <Box component="main" sx={{flexGrow: 1, p: 3}}>
+                <div style={{height: theme.mixins.toolbar.minHeight}}/>
                 <Typography variant="h4" gutterBottom>{fullName}'s Payroll Information</Typography>
+                {user && (user.role === 'ROLE_HR' || user.role === 'ROLE_ADMIN') && (
+                    <Box>
+                        <Button variant="contained" color="primary" onClick={handleNavigateToHRPage}>
+                            Manage Payrolls (HR MODE)
+                        </Button>
+                    </Box>
+                )}
+                <div style={{height: 20}}/>
                 {latestPayroll && (
-                    <Paper elevation={4} sx={{ p: 2, marginBottom: 2 }}>
+                    <Paper elevation={4} sx={{p: 2, marginBottom: 2}}>
                         <Typography variant="h6">Latest Payroll</Typography>
                         <Typography>Date: {formatDate(latestPayroll.payDate)}</Typography>
                         <Typography>Net Pay: ${latestPayroll.netPay}</Typography>
                     </Paper>
                 )}
-                <Pagination count={totalPages} page={page} onChange={handlePageChange} />
+                <Pagination count={totalPages} page={page} onChange={handlePageChange}/>
                 <Grid container spacing={3}>
                     <Grid item xs={12} md={8}>
-                        <Paper elevation={4} sx={{ p: 2 }}>
+                        <Paper elevation={4} sx={{p: 2}}>
                             {payrolls.map((payroll, index) => (
-                                <Box key={index} sx={{ marginBottom: 2, borderBottom: 1, borderColor: 'divider' }}>
+                                <Box key={index} sx={{marginBottom: 2, borderBottom: 1, borderColor: 'divider'}}>
                                     <Typography variant="h6">Payroll Date: {formatDate(payroll.payDate)}</Typography>
                                     <Typography>Net Pay: ${payroll.netPay}</Typography>
                                 </Box>
@@ -105,12 +118,12 @@ const PayrollPage = () => {
                     </Grid>
                     <Grid item xs={12} md={4}>
                         <ResponsiveContainer width="100%" height={300}>
-                            <LineChart data={payrollData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="date" />
-                                <YAxis />
-                                <Tooltip />
-                                <Line type="monotone" dataKey="netPay" stroke="#8884d8" activeDot={{ r: 8 }} />
+                            <LineChart data={payrollData} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
+                                <CartesianGrid strokeDasharray="3 3"/>
+                                <XAxis dataKey="date"/>
+                                <YAxis/>
+                                <Tooltip/>
+                                <Line type="monotone" dataKey="netPay" stroke="#8884d8" activeDot={{r: 8}}/>
                             </LineChart>
                         </ResponsiveContainer>
                         <FormControl fullWidth>
