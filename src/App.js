@@ -5,19 +5,7 @@ import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
 import ProtectedRoute from "./components/ProtectedRoute";
-
-const ProtectedComponent = () => {
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        const token = localStorage.getItem('userToken');
-        if (!token) {
-            navigate('/signin');
-        }
-    }, []);
-
-    return <div>Protected Component</div>;
-}
+import PayrollPage from "./pages/PayrollPage";
 
 const App = () => {
     return (
@@ -29,7 +17,7 @@ const App = () => {
                 {/* Wrap all protected routes inside a single ProtectedRoute */}
                 <Route element={<ProtectedRoute />}>
                     <Route path="/mainpage" element={<Dashboard />} />
-                    <Route path="/payslips" element={<div>Payslips Page</div>} />
+                    <Route path="/payroll" element={<PayrollPage />} />
                     <Route path="/absences" element={<div>Absences Page</div>} />
                     <Route path="/jobs" element={<div>Jobs Page</div>} />
                     <Route path="/onboarding" element={<div>Onboarding Page</div>} />
