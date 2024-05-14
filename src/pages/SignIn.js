@@ -1,34 +1,55 @@
-// src/pages/SignIn.js
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';  // Import useNavigate instead of useHistory
+import { useNavigate } from 'react-router-dom';
 import './SignIn.css';
 import logo from './assets/logo.png';
+import { useUser } from "../context/UserContext";
 
 const SignIn = () => {
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');// Add rememberMe state
-    const navigate = useNavigate();  // useNavigate hook instead of useHistory
+    const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false); // Track loading state
+    const navigate = useNavigate();
+    const { saveUser } = useUser();
 
     useEffect(() => {
-        document.title = "Sign In - HRConnect"; // Sets the page title
+        document.title = "Sign In - HRConnect";
     }, []);
 
     const handleSignIn = async (e) => {
         e.preventDefault();
-        console.log('Signing in:', email, password);
+        setIsLoading(true); // Begin loading
         try {
-            const response = await axios.post('http://localhost:8080/api/auth/signin', { email, password });
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/signin`, { email, password });
             if (response.status === 200) {
-                // Save the JWT from response to local storage or state management
-                localStorage.setItem('userToken', response.data.accessToken);
-                navigate("/mainpage");  // navigate instead of history.push
+                localStorage.setItem('userToken', response.data.token);
+                await fetchUserDetails(email, response.data.token);
             } else {
                 alert('Sign In Failed');
             }
         } catch (error) {
             console.error('Sign In Error', error);
-            alert('Invalid credentials');
+            alert('Invalid credentials'); // Consider more specific messaging
+        } finally {
+            setIsLoading(false); // End loading
+        }
+    };
+
+    const fetchUserDetails = async (email, token) => {
+        try {
+            const encodedEmail = encodeURIComponent(email);
+            const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/user/${encodedEmail}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (userResponse.status === 200) {
+                saveUser(userResponse.data, token);
+                navigate("/mainpage");
+            } else {
+                alert('Failed to fetch user details');
+            }
+        } catch (error) {
+            console.error('Error fetching user details', error);
+            alert('Failed to retrieve user data');
         }
     };
 
@@ -46,7 +67,9 @@ const SignIn = () => {
                         <label>Password:</label>
                         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                     </div>
-                    <button type="submit" className="signin-button">Sign In</button>
+                    <button type="submit" className="signin-button" disabled={isLoading}>
+                        {isLoading ? 'Signing In...' : 'Sign In'}
+                    </button>
                 </form>
             </div>
         </div>

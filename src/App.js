@@ -1,9 +1,23 @@
 // src/App.js
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import React, {useEffect} from 'react';
+import {BrowserRouter as Router, Route, Routes, Navigate, useNavigate} from 'react-router-dom';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
-import MainPage from './pages/MainPage';
+import Dashboard from './pages/Dashboard';
+import ProtectedRoute from "./components/ProtectedRoute";
+
+const ProtectedComponent = () => {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem('userToken');
+        if (!token) {
+            navigate('/signin');
+        }
+    }, []);
+
+    return <div>Protected Component</div>;
+}
 
 const App = () => {
     return (
@@ -11,8 +25,19 @@ const App = () => {
             <Routes>
                 <Route path="/signin" element={<SignIn />} />
                 <Route path="/signup" element={<SignUp />} />
-                <Route path="/mainpage" element={<MainPage />} />
                 <Route path="/" element={<Navigate replace to="/signin" />} />
+                {/* Wrap all protected routes inside a single ProtectedRoute */}
+                <Route element={<ProtectedRoute />}>
+                    <Route path="/mainpage" element={<Dashboard />} />
+                    <Route path="/payslips" element={<div>Payslips Page</div>} />
+                    <Route path="/absences" element={<div>Absences Page</div>} />
+                    <Route path="/jobs" element={<div>Jobs Page</div>} />
+                    <Route path="/onboarding" element={<div>Onboarding Page</div>} />
+                    <Route path="/offboarding" element={<div>Offboarding Page</div>} />
+                    <Route path="/engagement" element={<div>Employee Engagement Page</div>} />
+                    <Route path="/self-service" element={<div>Self Service Page</div>} />
+                    <Route path="/performance" element={<div>Performance Management Page</div>} />
+                </Route>
             </Routes>
         </Router>
     );
