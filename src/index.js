@@ -1,13 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import { ThemeProvider } from '@mui/material/styles';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import theme from './theme';
+import { UserProvider } from "./context/UserContext";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+      <UserProvider>
+        <ThemeProvider theme={theme}>
+          <App />
+        </ThemeProvider>
+      </UserProvider>
   </React.StrictMode>
 );
 
