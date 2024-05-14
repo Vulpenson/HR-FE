@@ -2,7 +2,7 @@ import React from 'react';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import Widget from '../components/Widget';
-import {Box, Grid, Paper, Typography} from '@mui/material';
+import {Box, Grid, Typography} from '@mui/material';
 import { format, parseISO } from 'date-fns';
 
 const formatDate = (dateStr) => {

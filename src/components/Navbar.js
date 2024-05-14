@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {AppBar, Toolbar, Typography, InputBase, IconButton, Avatar, MenuItem, Menu} from '@mui/material';
+import {AppBar, Toolbar, InputBase, IconButton, Avatar, MenuItem, Menu} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate } from 'react-router-dom';
 
