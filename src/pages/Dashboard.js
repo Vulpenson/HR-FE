@@ -20,8 +20,8 @@ const formatPayrollData = (payroll) => (
 // Formatting function for Absence
 const formatAbsenceData = (absence) => (
     <>
-        <Typography variant="body1">Start Date: {absence.startDate}</Typography>
-        <Typography variant="body1">End Date: {absence.endDate}</Typography>
+        <Typography variant="body1">Start Date: {formatDate(absence.startDate)}</Typography>
+        <Typography variant="body1">End Date: {formatDate(absence.endDate)}</Typography>
         <Typography variant="body1">Type: {absence.type}</Typography>
         <Typography variant="body1">Approved: {absence.approved ? "Yes" : "No"}</Typography>
     </>

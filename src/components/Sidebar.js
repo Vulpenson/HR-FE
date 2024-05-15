@@ -20,7 +20,7 @@ const Sidebar = () => {
     };
 
     const menuItems = [
-        { name: 'View Payslips', icon: <AccountBalanceWalletIcon />, path: '/payslips' },
+        { name: 'View Payslips', icon: <AccountBalanceWalletIcon />, path: '/payroll' },
         { name: 'Absences', icon: <EventNoteIcon />, path: '/absences' },
         { name: 'Job Applications', icon: <WorkIcon />, path: '/jobs' },
         { name: 'Onboarding', icon: <PeopleIcon />, path: '/onboarding' },

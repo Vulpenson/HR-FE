@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {Box, Card, CardContent, Typography, useTheme} from '@mui/material';
 
-
-
 const Widget = ({ title, endpoint, formatData }) => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
