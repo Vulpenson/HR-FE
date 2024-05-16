@@ -35,6 +35,8 @@ const AllAccountsDetailsPage = () => {
     const [editIndex, setEditIndex] = useState(null);
     const [editedDetails, setEditedDetails] = useState({});
     const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [grossPay, setGrossPay] = useState('');
+    const [editingGrossPay, setEditingGrossPay] = useState(null);
     const theme = useTheme();
 
     const fetchAllUsers = async (page, rowsPerPage) => {
@@ -111,6 +113,16 @@ const AllAccountsDetailsPage = () => {
         }
     };
 
+    const handleGrossPayEditToggle = (index, grossPay) => {
+        if (editingGrossPay === index) {
+            setEditingGrossPay(null);
+            setGrossPay('');
+        } else {
+            setEditingGrossPay(index);
+            setGrossPay(grossPay || '');
+        }
+    };
+
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         if (value.length <= 520) {
@@ -119,6 +131,10 @@ const AllAccountsDetailsPage = () => {
                 [name]: value,
             });
         }
+    };
+
+    const handleGrossPayChange = (event) => {
+        setGrossPay(event.target.value);
     };
 
     const handleSave = async (index, userEmail) => {
@@ -133,6 +149,23 @@ const AllAccountsDetailsPage = () => {
             setSnackbarOpen(true);
         } catch (err) {
             setError('Failed to update personal details');
+            console.error(err);
+        }
+    };
+
+    const handleGrossPaySave = async (userEmail) => {
+        try {
+            await axios.post(`http://localhost:8080/api/payroll/grosspay/${userEmail}/${grossPay}`, null, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setEditingGrossPay(null);
+            setGrossPay('');
+            fetchAllUsers(page, rowsPerPage);
+            setSnackbarOpen(true);
+        } catch (err) {
+            setError('Failed to update gross pay');
             console.error(err);
         }
     };
@@ -179,6 +212,7 @@ const AllAccountsDetailsPage = () => {
                                     <TableCell sx={{ minWidth: 150 }}>Identity Card</TableCell>
                                     <TableCell sx={{ minWidth: 150 }}>Identity Card Series</TableCell>
                                     <TableCell sx={{ minWidth: 150 }}>Identity Card Number</TableCell>
+                                    <TableCell sx={{ minWidth: 150 }}>Gross Pay</TableCell> {/* New Column */}
                                     <TableCell sx={{ minWidth: 150 }}>Registered By</TableCell>
                                     <TableCell sx={{ minWidth: 150 }}>Registration Date</TableCell>
                                     <TableCell sx={{ minWidth: 150 }}>Company Position</TableCell>
@@ -328,6 +362,31 @@ const AllAccountsDetailsPage = () => {
                                                 />
                                             ) : (
                                                 user.personalDetails?.identityCardNumber || 'N/A'
+                                            )}
+                                        </TableCell>
+                                        <TableCell>
+                                            {editingGrossPay === index ? (
+                                                <>
+                                                    <TextField
+                                                        name="grossPay"
+                                                        value={grossPay}
+                                                        onChange={handleGrossPayChange}
+                                                        fullWidth
+                                                    />
+                                                    <Button onClick={() => handleGrossPaySave(user.email)} color="primary">
+                                                        Save
+                                                    </Button>
+                                                    <Button onClick={() => handleGrossPayEditToggle(index)} color="secondary">
+                                                        Cancel
+                                                    </Button>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    {user.grossPay || 'N/A'}
+                                                    <Button onClick={() => handleGrossPayEditToggle(index, user.grossPay)} color="primary">
+                                                        Edit
+                                                    </Button>
+                                                </>
                                             )}
                                         </TableCell>
                                         <TableCell>

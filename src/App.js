@@ -9,6 +9,7 @@ import PayrollPage from "./pages/PayrollPage";
 import HRPayrollPage from "./pages/HRPayrollPage";
 import AccountDetailsPage from "./pages/AccountDetailsPage";
 import AllAccountsDetailsPage from "./pages/AllAccountsDetailsPage";
+import AdminMenu from "./pages/AdminMenu";
 
 const App = () => {
     return (
@@ -35,7 +36,7 @@ const App = () => {
                     <Route path="/search-accounts" element={<AllAccountsDetailsPage/>}/>
                 </Route>
                 <Route element={<ProtectedRouteAdmin />}>
-                    <Route path="/admin-menu" element={<div>Admin Menu Page</div>} />
+                    <Route path="/admin-menu" element={<AdminMenu/>} />
                 </Route>
             </Routes>
         </Router>
