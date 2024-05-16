@@ -8,6 +8,7 @@ import ProtectedRoute, {ProtectedRouteHR} from "./components/ProtectedRoute";
 import PayrollPage from "./pages/PayrollPage";
 import HRPayrollPage from "./pages/HRPayrollPage";
 import AccountDetailsPage from "./pages/AccountDetailsPage";
+import AllAccountsDetailsPage from "./pages/AllAccountsDetailsPage";
 
 const App = () => {
     return (
@@ -31,7 +32,7 @@ const App = () => {
                 </Route>
                 <Route element={<ProtectedRouteHR />}>
                     <Route path="/hr-payrolls" element={<HRPayrollPage />} />
-                    <Route path="/users-details" element={<div>Users-Details</div>}/>
+                    <Route path="/search-accounts" element={<AllAccountsDetailsPage/>}/>
                 </Route>
             </Routes>
         </Router>

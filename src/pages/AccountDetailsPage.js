@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
-    Box, Typography, Paper, Grid, CircularProgress, Button, TextField
+    Box, Typography, Paper, Grid, CircularProgress, Button, TextField, Snackbar, Alert
 } from '@mui/material';
 import { useUser } from '../context/UserContext';
 import Navbar from "../components/Navbar";
@@ -14,6 +14,7 @@ const AccountDetailsPage = () => {
     const [error, setError] = useState('');
     const [editMode, setEditMode] = useState(false);
     const [editedDetails, setEditedDetails] = useState({});
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
 
     const fetchPersonalDetails = async () => {
         try {
@@ -58,11 +59,16 @@ const AccountDetailsPage = () => {
             });
             setPersonalDetails(response.data);
             setEditMode(false);
+            setSnackbarOpen(true); // Show snackbar
             await fetchPersonalDetails();
         } catch (err) {
             setError('Failed to update personal details');
             console.error(err);
         }
+    };
+
+    const handleCloseSnackbar = () => {
+        setSnackbarOpen(false);
     };
 
     if (loading) return <CircularProgress />;
@@ -87,11 +93,11 @@ const AccountDetailsPage = () => {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <Typography variant="subtitle1">First Name</Typography>
-                                <Typography>{user.firstName}</Typography>
+                            <Typography>{user.firstName}</Typography>
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <Typography variant="subtitle1">Last Name</Typography>
-                                <Typography>{user.lastName}</Typography>
+                            <Typography>{user.lastName}</Typography>
                         </Grid>
                         <Grid item xs={12}>
                             <Typography variant="subtitle1">Email</Typography>
@@ -113,7 +119,7 @@ const AccountDetailsPage = () => {
                                             fullWidth
                                         />
                                     ) : (
-                                        <Typography>{personalDetails.cnp}</Typography>
+                                        <Typography>{personalDetails?.cnp}</Typography>
                                     )}
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -126,7 +132,7 @@ const AccountDetailsPage = () => {
                                             fullWidth
                                         />
                                     ) : (
-                                        <Typography>{personalDetails.phoneNumber}</Typography>
+                                        <Typography>{personalDetails?.phoneNumber}</Typography>
                                     )}
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -139,7 +145,7 @@ const AccountDetailsPage = () => {
                                             fullWidth
                                         />
                                     ) : (
-                                        <Typography>{personalDetails.address}</Typography>
+                                        <Typography>{personalDetails?.address}</Typography>
                                     )}
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -152,7 +158,7 @@ const AccountDetailsPage = () => {
                                             fullWidth
                                         />
                                     ) : (
-                                        <Typography>{personalDetails.city}</Typography>
+                                        <Typography>{personalDetails?.city}</Typography>
                                     )}
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -165,7 +171,7 @@ const AccountDetailsPage = () => {
                                             fullWidth
                                         />
                                     ) : (
-                                        <Typography>{personalDetails.country}</Typography>
+                                        <Typography>{personalDetails?.country}</Typography>
                                     )}
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -178,7 +184,7 @@ const AccountDetailsPage = () => {
                                             fullWidth
                                         />
                                     ) : (
-                                        <Typography>{personalDetails.postalCode}</Typography>
+                                        <Typography>{personalDetails?.postalCode}</Typography>
                                     )}
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -191,7 +197,7 @@ const AccountDetailsPage = () => {
                                             fullWidth
                                         />
                                     ) : (
-                                        <Typography>{personalDetails.bank}</Typography>
+                                        <Typography>{personalDetails?.bank}</Typography>
                                     )}
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -204,7 +210,7 @@ const AccountDetailsPage = () => {
                                             fullWidth
                                         />
                                     ) : (
-                                        <Typography>{personalDetails.bankAccount}</Typography>
+                                        <Typography>{personalDetails?.bankAccount}</Typography>
                                     )}
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -217,7 +223,7 @@ const AccountDetailsPage = () => {
                                             fullWidth
                                         />
                                     ) : (
-                                        <Typography>{personalDetails.identityCard}</Typography>
+                                        <Typography>{personalDetails?.identityCard}</Typography>
                                     )}
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -230,7 +236,7 @@ const AccountDetailsPage = () => {
                                             fullWidth
                                         />
                                     ) : (
-                                        <Typography>{personalDetails.identityCardSeries}</Typography>
+                                        <Typography>{personalDetails?.identityCardSeries}</Typography>
                                     )}
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -243,7 +249,7 @@ const AccountDetailsPage = () => {
                                             fullWidth
                                         />
                                     ) : (
-                                        <Typography>{personalDetails.identityCardNumber}</Typography>
+                                        <Typography>{personalDetails?.identityCardNumber}</Typography>
                                     )}
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -256,7 +262,7 @@ const AccountDetailsPage = () => {
                                             fullWidth
                                         />
                                     ) : (
-                                        <Typography>{personalDetails.registeredBy}</Typography>
+                                        <Typography>{personalDetails?.registeredBy}</Typography>
                                     )}
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -269,24 +275,24 @@ const AccountDetailsPage = () => {
                                             fullWidth
                                         />
                                     ) : (
-                                        <Typography>{personalDetails.registrationDate}</Typography>
+                                        <Typography>{personalDetails?.registrationDate}</Typography>
                                     )}
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <Typography variant="subtitle1">Company Position</Typography>
-                                        <Typography>{personalDetails.companyPosition}</Typography>
+                                    <Typography>{personalDetails?.companyPosition}</Typography>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <Typography variant="subtitle1">Contract Number</Typography>
-                                        <Typography>{personalDetails.contractNumber}</Typography>
+                                    <Typography>{personalDetails?.contractNumber}</Typography>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <Typography variant="subtitle1">Contract Start Date</Typography>
-                                        <Typography>{personalDetails.contractStartDate}</Typography>
+                                    <Typography>{personalDetails?.contractStartDate}</Typography>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <Typography variant="subtitle1">Department</Typography>
-                                        <Typography>{personalDetails.department}</Typography>
+                                    <Typography>{personalDetails?.department}</Typography>
                                 </Grid>
                             </>
                         )}
@@ -297,6 +303,15 @@ const AccountDetailsPage = () => {
                         Save Changes
                     </Button>
                 )}
+                <Snackbar
+                    open={snackbarOpen}
+                    autoHideDuration={6000}
+                    onClose={handleCloseSnackbar}
+                >
+                    <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+                        Detail successfully updated!
+                    </Alert>
+                </Snackbar>
             </Box>
         </Box>
     );
