@@ -17,4 +17,11 @@ export const ProtectedRouteHR = () => {
     return token && (roleUser === 'ROLE_HR' || roleUser === 'ROLE_ADMIN') ? <Outlet /> : <Navigate to="/signin" replace />;
 }
 
+export const ProtectedRouteAdmin = () => {
+    const { user, saveUser } = useUser();
+    const token = localStorage.getItem('userToken');
+    const roleUser = user ? user.role : null;
+    return token && roleUser === 'ROLE_ADMIN' ? <Outlet /> : <Navigate to="/signin" replace />;
+}
+
 export default ProtectedRoute;

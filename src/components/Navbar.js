@@ -63,7 +63,7 @@ const Navbar = () => {
                         'aria-labelledby': 'basic-button',
                     }}
                 >
-                    <MenuItem onClick={() => handleMenuClick('/personal-details')}>Account Details</MenuItem>
+                    <MenuItem onClick={() => handleMenuClick('/account-details')}>Account Details</MenuItem>
                     <MenuItem onClick={() => handleMenuClick('/settings')}>Settings</MenuItem>
                 </Menu>
             </Toolbar>

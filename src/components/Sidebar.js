@@ -1,14 +1,15 @@
 import React from 'react';
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, useTheme } from '@mui/material';
+import {Drawer, Icon, List, ListItem, ListItemIcon, ListItemText, useTheme} from '@mui/material';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import WorkIcon from '@mui/icons-material/Work';
-import PeopleIcon from '@mui/icons-material/People';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import SelfImprovementIcon from '@mui/icons-material/SelfImprovement';
 import {useNavigate} from "react-router-dom";
 import {useUser} from "../context/UserContext";
+import GroupIcon from '@mui/icons-material/Group';
 
 const Sidebar = () => {
     const theme = useTheme();
@@ -23,12 +24,20 @@ const Sidebar = () => {
         { name: 'View Payslips', icon: <AccountBalanceWalletIcon />, path: '/payroll' },
         { name: 'Absences', icon: <EventNoteIcon />, path: '/absences' },
         { name: 'Job Applications', icon: <WorkIcon />, path: '/jobs' },
-        { name: 'Onboarding', icon: <PeopleIcon />, path: '/onboarding' },
+        { name: 'Onboarding', icon: <PersonAddIcon />, path: '/onboarding' },
         ...(user && user.offboarding ? [{ name: 'Offboarding', icon: <ExitToAppIcon />, path: '/offboarding' }] : []),
         { name: 'Employee Engagement', icon: <EmojiEventsIcon />, path: '/engagement' },
         { name: 'Employee Self-Service', icon: <SelfImprovementIcon />, path: '/self-service' },
         { name: 'Performance Management', icon: <WorkIcon />, path: '/performance' },
     ];
+
+    if (user && (user.role === 'ROLE_HR' || user.role === 'ROLE_ADMIN')) {
+        menuItems.push({ name: 'Search Accounts', icon: <GroupIcon />, path: '/search-accounts' });
+    }
+
+    if (user && user.role === 'ROLE_ADMIN') {
+        menuItems.push({ name: 'Admin Menu', icon: <Icon />, path: '/admin-menu' });
+    }
 
     return (
         <Drawer

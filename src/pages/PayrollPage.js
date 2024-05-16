@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
     Box,
@@ -10,17 +10,19 @@ import {
     FormControl,
     InputLabel,
     Select,
-    MenuItem, Button
+    MenuItem,
+    Button
 } from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import {format, parseISO} from "date-fns";
+import { format, parseISO } from "date-fns";
 import { useUser } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 
 const PayrollPage = () => {
     const [payrolls, setPayrolls] = useState([]);
+    const [chartData, setChartData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [page, setPage] = useState(1);
@@ -33,19 +35,43 @@ const PayrollPage = () => {
     const fullName = user ? `${user.firstName} ${user.lastName}` : "User";
 
     useEffect(() => {
-        fetchPayrolls();
-    }, []);
+        fetchChartData();
+        fetchPaginatedPayrolls(page);
+    }, [user, page]);
 
     const formatDate = (dateStr) => {
         return format(parseISO(dateStr), 'dd-MMM-yyyy');
     };
 
-    const fetchPayrolls = async () => {
+    const fetchChartData = async () => {
         try {
             const token = localStorage.getItem('userToken');
             const res = await axios.get('http://localhost:8080/api/payroll/user/all', {
                 headers: {
                     Authorization: `Bearer ${token}`
+                }
+            });
+            const allPayrolls = res.data.content;
+            setChartData(allPayrolls.map(payroll => ({
+                date: formatDate(payroll.payDate),
+                netPay: payroll.netPay
+            })));
+        } catch (err) {
+            setError('Failed to fetch payroll data for chart');
+        }
+    };
+
+    const fetchPaginatedPayrolls = async (page) => {
+        setLoading(true);
+        try {
+            const token = localStorage.getItem('userToken');
+            const res = await axios.get('http://localhost:8080/api/payroll/user/all', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                params: {
+                    page: page - 1, // API pages are 0-indexed, so subtract 1 from the React state
+                    size: 10, // Assuming 10 entries per page, adjust as needed
                 }
             });
             setPayrolls(res.data.content);
@@ -54,6 +80,7 @@ const PayrollPage = () => {
         } catch (err) {
             setError('Failed to fetch payrolls');
             setLoading(false);
+            console.log(err);
         }
     };
 
@@ -62,12 +89,8 @@ const PayrollPage = () => {
 
     const latestPayroll = payrolls.length > 0 ? payrolls[0] : null;
 
-    const payrollData = payrolls
-        .map(payroll => ({
-            date: formatDate(payroll.payDate),
-            netPay: payroll.netPay
-        }))
-        .slice(-6)
+    const payrollData = chartData
+        .slice(-chartRange)
         .reverse();
 
     const handlePageChange = (event, value) => {
@@ -104,7 +127,10 @@ const PayrollPage = () => {
                         <Typography>Net Pay: ${latestPayroll.netPay}</Typography>
                     </Paper>
                 )}
-                <Pagination count={totalPages} page={page} onChange={handlePageChange}/>
+                <Pagination
+                    count={totalPages}
+                    page={page}
+                    onChange={handlePageChange}/>
                 <Grid container spacing={3}>
                     <Grid item xs={12} md={8}>
                         <Paper elevation={4} sx={{p: 2}}>
