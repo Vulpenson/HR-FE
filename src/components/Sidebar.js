@@ -35,6 +35,10 @@ const Sidebar = () => {
         menuItems.push({ name: 'Search Accounts', icon: <GroupIcon />, path: '/search-accounts' });
     }
 
+    if (user && user.role === 'ROLE_ADMIN') {
+        menuItems.push({ name: 'Admin Menu', icon: <Icon />, path: '/admin-menu' });
+    }
+
     return (
         <Drawer
             variant="permanent"

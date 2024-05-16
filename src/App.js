@@ -4,7 +4,7 @@ import {BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
-import ProtectedRoute, {ProtectedRouteHR} from "./components/ProtectedRoute";
+import ProtectedRoute, {ProtectedRouteAdmin, ProtectedRouteHR} from "./components/ProtectedRoute";
 import PayrollPage from "./pages/PayrollPage";
 import HRPayrollPage from "./pages/HRPayrollPage";
 import AccountDetailsPage from "./pages/AccountDetailsPage";
@@ -33,6 +33,9 @@ const App = () => {
                 <Route element={<ProtectedRouteHR />}>
                     <Route path="/hr-payrolls" element={<HRPayrollPage />} />
                     <Route path="/search-accounts" element={<AllAccountsDetailsPage/>}/>
+                </Route>
+                <Route element={<ProtectedRouteAdmin />}>
+                    <Route path="/admin-menu" element={<div>Admin Menu Page</div>} />
                 </Route>
             </Routes>
         </Router>

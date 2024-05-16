@@ -35,18 +35,7 @@ const AllAccountsDetailsPage = () => {
     const [editIndex, setEditIndex] = useState(null);
     const [editedDetails, setEditedDetails] = useState({});
     const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const [totalPages, setTotalPages] = useState(0);
     const theme = useTheme();
-
-    useEffect(() => {
-        if (user && (user.role === 'ROLE_HR' || user.role === 'ROLE_ADMIN')) {
-            fetchAllUsers(page, rowsPerPage);
-        }
-    }, [user, page, rowsPerPage]);
-
-    useEffect(() => {
-        handleSearch();
-    }, [searchQuery, users]);
 
     const fetchAllUsers = async (page, rowsPerPage) => {
         setLoading(true);
@@ -64,8 +53,7 @@ const AllAccountsDetailsPage = () => {
             });
             setUsers(response.data.content || []);
             setFilteredUsers(response.data.content || []);
-            setTotalRows(response.data.numberOfElements || 0);
-            setTotalPages(response.data.totalPages || 0);
+            setTotalRows(response.data.totalElements || 0);
             console.log(response.data)
             setLoading(false);
         } catch (err) {
@@ -90,6 +78,16 @@ const AllAccountsDetailsPage = () => {
         }
     };
 
+    useEffect(() => {
+        if (user && (user.role === 'ROLE_HR' || user.role === 'ROLE_ADMIN')) {
+            fetchAllUsers(page, rowsPerPage);
+        }
+    }, [user, page, rowsPerPage]);
+
+    useEffect(() => {
+        handleSearch();
+    }, [searchQuery, users]);
+
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -108,7 +106,6 @@ const AllAccountsDetailsPage = () => {
         if (editIndex === index) {
             setEditIndex(null);
         } else {
-            setEditIndex(index);
             setEditIndex(index);
             setEditedDetails(filteredUsers[index].personalDetails || {});
         }
@@ -409,7 +406,7 @@ const AllAccountsDetailsPage = () => {
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
                         component="div"
-                        count={totalPages}
+                        count={totalRows}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
