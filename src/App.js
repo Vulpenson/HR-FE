@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import ProtectedRoute, {ProtectedRouteHR} from "./components/ProtectedRoute";
 import PayrollPage from "./pages/PayrollPage";
 import HRPayrollPage from "./pages/HRPayrollPage";
+import AccountDetailsPage from "./pages/AccountDetailsPage";
 
 const App = () => {
     return (
@@ -26,9 +27,11 @@ const App = () => {
                     <Route path="/engagement" element={<div>Employee Engagement Page</div>} />
                     <Route path="/self-service" element={<div>Self Service Page</div>} />
                     <Route path="/performance" element={<div>Performance Management Page</div>} />
+                    <Route path="/account-details" element={<AccountDetailsPage />} />
                 </Route>
                 <Route element={<ProtectedRouteHR />}>
                     <Route path="/hr-payrolls" element={<HRPayrollPage />} />
+                    <Route path="/users-details" element={<div>Users-Details</div>}/>
                 </Route>
             </Routes>
         </Router>

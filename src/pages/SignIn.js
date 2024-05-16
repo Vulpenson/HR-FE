@@ -13,7 +13,7 @@ const SignIn = () => {
     const { saveUser } = useUser();
 
     useEffect(() => {
-        document.title = "Sign In - HRConnect";
+        // document.title = "Sign In - HRConnect";
     }, []);
 
     const handleSignIn = async (e) => {
