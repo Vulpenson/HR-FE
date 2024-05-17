@@ -1,5 +1,5 @@
 import React from 'react';
-import {Drawer, Icon, List, ListItem, ListItemIcon, ListItemText, useTheme} from '@mui/material';
+import {Drawer, List, ListItem, ListItemIcon, ListItemText, useTheme} from '@mui/material';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import WorkIcon from '@mui/icons-material/Work';
@@ -7,9 +7,10 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import SelfImprovementIcon from '@mui/icons-material/SelfImprovement';
+import GroupIcon from '@mui/icons-material/Group';
+import SettingsIcon from '@mui/icons-material/Settings';
 import {useNavigate} from "react-router-dom";
 import {useUser} from "../context/UserContext";
-import GroupIcon from '@mui/icons-material/Group';
 
 const Sidebar = () => {
     const theme = useTheme();
@@ -36,7 +37,7 @@ const Sidebar = () => {
     }
 
     if (user && user.role === 'ROLE_ADMIN') {
-        menuItems.push({ name: 'Admin Menu', icon: <Icon />, path: '/admin-menu' });
+        menuItems.push({ name: 'Admin Menu', icon: <SettingsIcon />, path: '/admin-menu', color: 'red' });
     }
 
     return (
@@ -61,21 +62,26 @@ const Sidebar = () => {
                         key={item.name}
                         onClick={() => handleNavigation(item.path)}
                         sx={{
-                            backgroundColor: 'secondary.main', // Set background color to white
-                            color: theme.palette.text.primary, // Ensure text color is from the theme for readability
+                            backgroundColor: item.color || 'secondary.main', // Set background color
+                            color: item.color ? theme.palette.common.white : theme.palette.text.primary, // Set text color based on background
                             transition: '0.5s',
                             '&:hover': {
-                                backgroundColor: theme.palette.grey[100],
+                                backgroundColor: item.color ? theme.palette.error.dark : theme.palette.grey[100],
                                 transform: 'scale(1.05)',
                                 boxShadow: '0px 4px 20px rgba(0,0,0,0.1)' // subtle shadow
                             }
                         }}>
-                        <ListItemIcon>
+                        <ListItemIcon sx={{ color: item.color ? theme.palette.common.white : theme.palette.text.primary }}>
                             {item.icon}
                         </ListItemIcon>
                         <ListItemText
                             primary={item.name}
-                            primaryTypographyProps={{ style: { fontWeight: 'medium' } }} />
+                            primaryTypographyProps={{
+                                style: {
+                                    fontWeight: 'medium'
+                                }
+                            }}
+                        />
                     </ListItem>
                 ))}
             </List>
