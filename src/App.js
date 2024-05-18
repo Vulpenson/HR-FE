@@ -12,6 +12,8 @@ import AllAccountsDetailsPage from "./pages/AllAccountsDetailsPage";
 import AdminMenu from "./pages/AdminMenu";
 import FeedbackFormPage from "./pages/FeedbackFormPage";
 import ViewFeedbacksPage from "./pages/ViewFeedbacksPage";
+import JobOffersPage from "./pages/JobOffersPage";
+import JobOfferFormPage from "./pages/JobOfferFormPage";
 
 const App = () => {
     return (
@@ -25,7 +27,7 @@ const App = () => {
                     <Route path="/mainpage" element={<Dashboard />} />
                     <Route path="/payroll" element={<PayrollPage />} />
                     <Route path="/absences" element={<div>Absences Page</div>} />
-                    <Route path="/jobs" element={<div>Jobs Page</div>} />
+                    <Route path="/jobs" element={<JobOffersPage/>} />
                     <Route path="/onboarding" element={<div>Onboarding Page</div>} />
                     <Route path="/offboarding" element={<div>Offboarding Page</div>} />
                     <Route path="/self-service" element={<div>Self Service Page</div>} />
@@ -37,6 +39,7 @@ const App = () => {
                     <Route path="/hr-payrolls" element={<HRPayrollPage />} />
                     <Route path="/search-accounts" element={<AllAccountsDetailsPage/>}/>
                     <Route path="/view-feedbacks" element={<ViewFeedbacksPage/>}/>
+                    <Route path="/add-job-offer" element={<JobOfferFormPage/>}/>
                 </Route>
                 <Route element={<ProtectedRouteAdmin />}>
                     <Route path="/admin-menu" element={<AdminMenu/>} />
