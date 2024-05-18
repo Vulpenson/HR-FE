@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
-    Box, Typography, Paper, Grid, CircularProgress, Button, TextField, Snackbar, Alert
+    Box, Typography, Paper, Grid, CircularProgress, Button, TextField, Snackbar, Alert, Input
 } from '@mui/material';
 import { useUser } from '../context/UserContext';
 import Navbar from "../components/Navbar";
@@ -15,6 +15,7 @@ const AccountDetailsPage = () => {
     const [editMode, setEditMode] = useState(false);
     const [editedDetails, setEditedDetails] = useState({});
     const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [uploading, setUploading] = useState(false);
 
     const fetchPersonalDetails = async () => {
         try {
@@ -63,6 +64,53 @@ const AccountDetailsPage = () => {
             await fetchPersonalDetails();
         } catch (err) {
             setError('Failed to update personal details');
+            console.error(err);
+        }
+    };
+
+    const handleFileUpload = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            setUploading(true);
+            await axios.post(`http://localhost:8080/api/users/upload-cv`, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                },
+            });
+            setSnackbarOpen(true); // Show snackbar
+            setUploading(false);
+        } catch (err) {
+            setError('Failed to upload CV');
+            console.error(err);
+            setUploading(false);
+        }
+    };
+
+    const handleFileDownload = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/users/download-cv`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                responseType: 'blob', // Important to handle binary data
+            });
+
+            // Create a URL for the downloaded file and initiate a download
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            const fileName = `${user.firstName}${user.lastName}CV.pdf`;
+            link.setAttribute('download', fileName); // dynamically set file name
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (err) {
+            // setError('Failed to download CV');
             console.error(err);
         }
     };
@@ -303,6 +351,29 @@ const AccountDetailsPage = () => {
                         Save Changes
                     </Button>
                 )}
+                <Box sx={{ mt: 3 }}>
+                    <Button
+                        variant="contained"
+                        component="label"
+                        color="primary"
+                        disabled={uploading}
+                    >
+                        {uploading ? 'Uploading...' : 'Upload CV'}
+                        <input
+                            type="file"
+                            hidden
+                            onChange={handleFileUpload}
+                        />
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={handleFileDownload}
+                        sx={{ ml: 2 }}
+                    >
+                        Download CV
+                    </Button>
+                </Box>
                 <Snackbar
                     open={snackbarOpen}
                     autoHideDuration={6000}
