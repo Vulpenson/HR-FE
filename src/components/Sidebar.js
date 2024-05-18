@@ -27,7 +27,7 @@ const Sidebar = () => {
         { name: 'Job Applications', icon: <WorkIcon />, path: '/jobs' },
         { name: 'Onboarding', icon: <PersonAddIcon />, path: '/onboarding' },
         ...(user && user.offboarding ? [{ name: 'Offboarding', icon: <ExitToAppIcon />, path: '/offboarding' }] : []),
-        { name: 'Employee Engagement', icon: <EmojiEventsIcon />, path: '/engagement' },
+        { name: 'Employee Engagement', icon: <EmojiEventsIcon />, path: '/feedback' },
         { name: 'Employee Self-Service', icon: <SelfImprovementIcon />, path: '/self-service' },
         { name: 'Performance Management', icon: <WorkIcon />, path: '/performance' },
     ];

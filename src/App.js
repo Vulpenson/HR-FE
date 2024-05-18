@@ -10,6 +10,8 @@ import HRPayrollPage from "./pages/HRPayrollPage";
 import AccountDetailsPage from "./pages/AccountDetailsPage";
 import AllAccountsDetailsPage from "./pages/AllAccountsDetailsPage";
 import AdminMenu from "./pages/AdminMenu";
+import FeedbackFormPage from "./pages/FeedbackFormPage";
+import ViewFeedbacksPage from "./pages/ViewFeedbacksPage";
 
 const App = () => {
     return (
@@ -26,14 +28,15 @@ const App = () => {
                     <Route path="/jobs" element={<div>Jobs Page</div>} />
                     <Route path="/onboarding" element={<div>Onboarding Page</div>} />
                     <Route path="/offboarding" element={<div>Offboarding Page</div>} />
-                    <Route path="/engagement" element={<div>Employee Engagement Page</div>} />
                     <Route path="/self-service" element={<div>Self Service Page</div>} />
                     <Route path="/performance" element={<div>Performance Management Page</div>} />
                     <Route path="/account-details" element={<AccountDetailsPage />} />
+                    <Route path="/feedback" element={<FeedbackFormPage />} />
                 </Route>
                 <Route element={<ProtectedRouteHR />}>
                     <Route path="/hr-payrolls" element={<HRPayrollPage />} />
                     <Route path="/search-accounts" element={<AllAccountsDetailsPage/>}/>
+                    <Route path="/view-feedbacks" element={<ViewFeedbacksPage/>}/>
                 </Route>
                 <Route element={<ProtectedRouteAdmin />}>
                     <Route path="/admin-menu" element={<AdminMenu/>} />

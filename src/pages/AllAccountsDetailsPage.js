@@ -25,12 +25,10 @@ import { useUser } from '../context/UserContext';
 const AllAccountsDetailsPage = () => {
     const { token, user } = useUser();
     const [users, setUsers] = useState([]);
-    const [filteredUsers, setFilteredUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [totalRows, setTotalRows] = useState(0);
     const [searchQuery, setSearchQuery] = useState('');
     const [editIndex, setEditIndex] = useState(null);
     const [editedDetails, setEditedDetails] = useState({});
@@ -39,7 +37,7 @@ const AllAccountsDetailsPage = () => {
     const [editingGrossPay, setEditingGrossPay] = useState(null);
     const theme = useTheme();
 
-    const fetchAllUsers = async (page, rowsPerPage) => {
+    const fetchAllUsers = async () => {
         setLoading(true);
         try {
             const response = await axios.get('http://localhost:8080/api/users/all', {
@@ -47,16 +45,11 @@ const AllAccountsDetailsPage = () => {
                     Authorization: `Bearer ${token}`
                 },
                 params: {
-                    page,
-                    size: rowsPerPage,
                     sortBy: 'lastName',
                     dir: 'asc'
                 }
             });
             setUsers(response.data.content || []);
-            setFilteredUsers(response.data.content || []);
-            setTotalRows(response.data.totalElements || 0);
-            console.log(response.data)
             setLoading(false);
         } catch (err) {
             setError('Failed to fetch users');
@@ -72,23 +65,17 @@ const AllAccountsDetailsPage = () => {
                 user.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 user.email.toLowerCase().includes(searchQuery.toLowerCase())
             );
-            setFilteredUsers(filtered);
-            setTotalRows(filtered.length);
+            return filtered;
         } else {
-            setFilteredUsers(users);
-            setTotalRows(users.length);
+            return users;
         }
     };
 
     useEffect(() => {
         if (user && (user.role === 'ROLE_HR' || user.role === 'ROLE_ADMIN')) {
-            fetchAllUsers(page, rowsPerPage);
+            fetchAllUsers();
         }
-    }, [user, page, rowsPerPage]);
-
-    useEffect(() => {
-        handleSearch();
-    }, [searchQuery, users]);
+    }, [user]);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -102,6 +89,7 @@ const AllAccountsDetailsPage = () => {
 
     const handleSearchQueryChange = (event) => {
         setSearchQuery(event.target.value);
+        setPage(0); // Reset to first page on filter change
     };
 
     const handleEditToggle = (index) => {
@@ -109,7 +97,7 @@ const AllAccountsDetailsPage = () => {
             setEditIndex(null);
         } else {
             setEditIndex(index);
-            setEditedDetails(filteredUsers[index].personalDetails || {});
+            setEditedDetails(users[index].personalDetails || {});
         }
     };
 
@@ -145,7 +133,7 @@ const AllAccountsDetailsPage = () => {
                 },
             });
             setEditIndex(null);
-            fetchAllUsers(page, rowsPerPage);
+            fetchAllUsers();
             setSnackbarOpen(true);
         } catch (err) {
             setError('Failed to update personal details');
@@ -162,7 +150,7 @@ const AllAccountsDetailsPage = () => {
             });
             setEditingGrossPay(null);
             setGrossPay('');
-            fetchAllUsers(page, rowsPerPage);
+            fetchAllUsers();
             setSnackbarOpen(true);
         } catch (err) {
             setError('Failed to update gross pay');
@@ -173,6 +161,9 @@ const AllAccountsDetailsPage = () => {
     const handleCloseSnackbar = () => {
         setSnackbarOpen(false);
     };
+
+    const filteredUsers = handleSearch();
+    const paginatedUsers = filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     if (loading) return <CircularProgress />;
     if (error) return <Typography color="error">{error}</Typography>;
@@ -222,7 +213,7 @@ const AllAccountsDetailsPage = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user, index) => (
+                                {paginatedUsers.map((user, index) => (
                                     <TableRow key={user.email}>
                                         <TableCell>
                                             {editIndex === index ? (
@@ -465,7 +456,7 @@ const AllAccountsDetailsPage = () => {
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
                         component="div"
-                        count={totalRows}
+                        count={filteredUsers.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
