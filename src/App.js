@@ -14,6 +14,7 @@ import FeedbackFormPage from "./pages/FeedbackFormPage";
 import ViewFeedbacksPage from "./pages/ViewFeedbacksPage";
 import JobOffersPage from "./pages/JobOffersPage";
 import JobOfferFormPage from "./pages/JobOfferFormPage";
+import JobOfferHRMode from "./pages/JobOfferHRMode";
 
 const App = () => {
     return (
@@ -40,6 +41,7 @@ const App = () => {
                     <Route path="/search-accounts" element={<AllAccountsDetailsPage/>}/>
                     <Route path="/view-feedbacks" element={<ViewFeedbacksPage/>}/>
                     <Route path="/add-job-offer" element={<JobOfferFormPage/>}/>
+                    <Route path="/job-offer-hr-mode" element={<JobOfferHRMode/>} />
                 </Route>
                 <Route element={<ProtectedRouteAdmin />}>
                     <Route path="/admin-menu" element={<AdminMenu/>} />
