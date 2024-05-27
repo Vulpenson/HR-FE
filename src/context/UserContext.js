@@ -21,8 +21,13 @@ export const UserProvider = ({ children }) => {
         setUser(userData);
     };
 
+    const clearUser = () => {
+        setUser(null);
+        setToken(null);
+    };
+
     return (
-        <UserContext.Provider value={{ user, token, saveUser}}>
+        <UserContext.Provider value={{ user, token, saveUser, clearUser}}>
             {children}
         </UserContext.Provider>
     );

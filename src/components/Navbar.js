@@ -1,10 +1,13 @@
-import React, {useState} from 'react';
-import {AppBar, Toolbar, InputBase, IconButton, Avatar, MenuItem, Menu} from '@mui/material';
+import React, { useState } from 'react';
+import { AppBar, Toolbar, InputBase, IconButton, Avatar, MenuItem, Menu } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useUser } from '../context/UserContext';
 
 const Navbar = () => {
     const navigate = useNavigate();
+    const { token, clearUser } = useUser();
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
 
@@ -23,6 +26,20 @@ const Navbar = () => {
     const handleMenuClick = (path) => {
         navigate(path);
         setAnchorEl(null);
+    };
+
+    const handleLogout = async () => {
+        try {
+            await axios.post('http://localhost:8080/api/auth/signout', {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            clearUser();
+            navigate('/signin');
+        } catch (err) {
+            console.error('Failed to logout', err);
+        }
     };
 
     return (
@@ -64,7 +81,7 @@ const Navbar = () => {
                     }}
                 >
                     <MenuItem onClick={() => handleMenuClick('/account-details')}>Account Details</MenuItem>
-                    <MenuItem onClick={() => handleMenuClick('/settings')}>Settings</MenuItem>
+                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </Menu>
             </Toolbar>
         </AppBar>

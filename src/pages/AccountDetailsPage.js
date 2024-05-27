@@ -26,6 +26,7 @@ const AccountDetailsPage = () => {
             });
             setPersonalDetails(response.data);
             setEditedDetails(response.data);
+            console.log(user);
             setLoading(false);
         } catch (err) {
             setError('Failed to fetch personal details');
