@@ -17,6 +17,7 @@ import JobOfferFormPage from "./pages/JobOfferFormPage";
 import JobOfferHRMode from "./pages/JobOfferHRMode";
 import AbsencesPage from "./pages/AbsencesPage";
 import SubordinatesAbsenceApprovalPage from "./pages/SubordinatesAbsenceApprovalPage";
+import OnboardingStatusPage from "./pages/OnboardingStatusPage";
 
 const App = () => {
     return (
@@ -31,7 +32,7 @@ const App = () => {
                     <Route path="/payroll" element={<PayrollPage />} />
                     <Route path="/absences" element={<AbsencesPage />} />
                     <Route path="/jobs" element={<JobOffersPage/>} />
-                    <Route path="/onboarding" element={<div>Onboarding Page</div>} />
+                    <Route path="/onboarding" element={<OnboardingStatusPage />} />
                     <Route path="/offboarding" element={<div>Offboarding Page</div>} />
                     <Route path="/self-service" element={<div>Self Service Page</div>} />
                     <Route path="/performance" element={<div>Performance Management Page</div>} />
