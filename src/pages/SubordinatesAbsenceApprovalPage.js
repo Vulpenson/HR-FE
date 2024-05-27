@@ -13,6 +13,11 @@ import {
     TableHead,
     TableRow,
     Paper,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
     IconButton,
 } from '@mui/material';
 import { useUser } from '../context/UserContext';
@@ -23,7 +28,8 @@ import WarningIcon from '@mui/icons-material/Warning';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { format, parse, startOfWeek, getDay, isSameDay } from 'date-fns';
+import { format, parse, startOfWeek, getDay } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 const locales = {
     'en-US': require('date-fns/locale/en-US'),
@@ -42,10 +48,13 @@ const SubordinatesAbsenceApprovalPage = () => {
     const [subordinates, setSubordinates] = useState([]);
     const [selectedSubordinate, setSelectedSubordinate] = useState(null);
     const [absences, setAbsences] = useState([]);
+    const [selectedAbsence, setSelectedAbsence] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
+    const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
+    const navigate = useNavigate();
 
     const fetchSubordinates = async () => {
         try {
@@ -70,7 +79,7 @@ const SubordinatesAbsenceApprovalPage = () => {
 
     const fetchSubordinateAbsences = async (subordinateEmail) => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/absences/user/${subordinateEmail}`, {
+            const response = await axios.get(`http://localhost:8080/api/absences/user/nodto/${subordinateEmail}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -96,9 +105,25 @@ const SubordinatesAbsenceApprovalPage = () => {
             );
             setSuccessMessage('Absence approved successfully!');
             setSnackbarOpen(true);
-            fetchSubordinates(); // Refresh the subordinates list
+            fetchSubordinateAbsences(selectedSubordinate); // Refresh the absences list
         } catch (err) {
             setError('Failed to approve absence');
+            console.error(err);
+        }
+    };
+
+    const handleDelete = async (absenceId) => {
+        try {
+            await axios.delete(`http://localhost:8080/api/absences/${absenceId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setSuccessMessage('Absence deleted successfully!');
+            setSnackbarOpen(true);
+            fetchSubordinateAbsences(selectedSubordinate); // Refresh the absences list
+        } catch (err) {
+            setError('Failed to delete absence');
             console.error(err);
         }
     };
@@ -122,6 +147,35 @@ const SubordinatesAbsenceApprovalPage = () => {
         };
     };
 
+    const handleSelectEvent = (event) => {
+        setSelectedAbsence(event);
+        setDetailsDialogOpen(true);
+    };
+
+    const handleDownloadDocument = async () => {
+        if (!selectedAbsence || !selectedAbsence.document) return;
+
+        try {
+            const response = await axios.get(`http://localhost:8080/api/absences/document/${selectedAbsence.id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                responseType: 'blob',
+            });
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `document_${selectedAbsence.id}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (err) {
+            setError('Failed to download document');
+            console.error(err);
+        }
+    };
+
     if (loading) return <CircularProgress />;
     if (error) return <Typography color="error">{error}</Typography>;
 
@@ -133,43 +187,48 @@ const SubordinatesAbsenceApprovalPage = () => {
                 <div style={{ height: 64 }} /> {/* This is to account for the navbar height */}
                 <Typography variant="h4" gutterBottom>Subordinates</Typography>
                 {!selectedSubordinate ? (
-                    <TableContainer component={Paper}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Email</TableCell>
-                                    <TableCell>Unapproved Absences</TableCell>
-                                    <TableCell>Action</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {subordinates.map((subordinate) => (
-                                    <TableRow key={subordinate}>
-                                        <TableCell>{subordinate}</TableCell>
-                                        <TableCell>
-                                            {subordinate.hasUnapprovedAbsence ? (
-                                                <WarningIcon color="error" />
-                                            ) : (
-                                                <CheckCircleIcon color="success" />
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                onClick={() => fetchSubordinateAbsences(subordinate)}
-                                            >
-                                                View Absences
-                                            </Button>
-                                        </TableCell>
+                    <>
+                        <Button variant="contained" sx={{ mb: 3}} onClick={() => navigate('/absences')}>
+                            My Absences
+                        </Button>
+                        <TableContainer component={Paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Email</TableCell>
+                                        <TableCell>Unapproved Absences</TableCell>
+                                        <TableCell>Action</TableCell>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                                </TableHead>
+                                <TableBody>
+                                    {subordinates.map((subordinate) => (
+                                        <TableRow key={subordinate}>
+                                            <TableCell>{subordinate}</TableCell>
+                                            <TableCell>
+                                                {subordinate.hasUnapprovedAbsence ? (
+                                                    <WarningIcon color="error" />
+                                                ) : (
+                                                    <CheckCircleIcon color="success" />
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Button
+                                                    variant="contained"
+                                                    color="primary"
+                                                    onClick={() => fetchSubordinateAbsences(subordinate)}
+                                                >
+                                                    View Absences
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </>
                 ) : (
                     <Box>
-                        <Button variant="contained" onClick={() => setSelectedSubordinate(null)}>
+                        <Button variant="contained" sx={{ mb: 3}} onClick={() => setSelectedSubordinate(null)}>
                             Back to Subordinates List
                         </Button>
                         <Typography variant="h5" gutterBottom>
@@ -187,9 +246,58 @@ const SubordinatesAbsenceApprovalPage = () => {
                             endAccessor="end"
                             style={{ height: 500, margin: '50px' }}
                             eventPropGetter={eventPropGetter}
+                            onSelectEvent={handleSelectEvent}
                         />
                     </Box>
                 )}
+                <Dialog open={detailsDialogOpen} onClose={() => setDetailsDialogOpen(false)}>
+                    <DialogTitle>Absence Details</DialogTitle>
+                    <DialogContent>
+                        {selectedAbsence && (
+                            <>
+                                <DialogContentText>
+                                    <strong>Type:</strong> {selectedAbsence.type.replace(/_/g, ' ').toLowerCase()}<br />
+                                    <strong>Start Date:</strong> {selectedAbsence.startDate}<br />
+                                    <strong>End Date:</strong> {selectedAbsence.endDate}<br />
+                                    <strong>Approved:</strong> {selectedAbsence.approved ? 'Yes' : 'No'}
+                                </DialogContentText>
+                                {selectedAbsence.document && (
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={handleDownloadDocument}
+                                        sx={{ mt: 2 }}
+                                    >
+                                        Download Document
+                                    </Button>
+                                )}
+                            </>
+                        )}
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setDetailsDialogOpen(false)}>Close</Button>
+                        {!selectedAbsence?.approved && (
+                            <Button
+                                onClick={() => {
+                                    handleApprove(selectedAbsence.id);
+                                    setDetailsDialogOpen(false);
+                                }}
+                                color="primary"
+                            >
+                                Approve
+                            </Button>
+                        )}
+                        <Button
+                            onClick={() => {
+                                handleDelete(selectedAbsence.id);
+                                setDetailsDialogOpen(false);
+                            }}
+                            color="secondary"
+                        >
+                            Delete
+                        </Button>
+                    </DialogActions>
+                </Dialog>
                 <Snackbar
                     open={snackbarOpen}
                     autoHideDuration={6000}
