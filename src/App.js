@@ -15,6 +15,8 @@ import ViewFeedbacksPage from "./pages/ViewFeedbacksPage";
 import JobOffersPage from "./pages/JobOffersPage";
 import JobOfferFormPage from "./pages/JobOfferFormPage";
 import JobOfferHRMode from "./pages/JobOfferHRMode";
+import AbsencesPage from "./pages/AbsencesPage";
+import SubordinatesAbsenceApprovalPage from "./pages/SubordinatesAbsenceApprovalPage";
 
 const App = () => {
     return (
@@ -27,7 +29,7 @@ const App = () => {
                 <Route element={<ProtectedRoute />}>
                     <Route path="/mainpage" element={<Dashboard />} />
                     <Route path="/payroll" element={<PayrollPage />} />
-                    <Route path="/absences" element={<div>Absences Page</div>} />
+                    <Route path="/absences" element={<AbsencesPage />} />
                     <Route path="/jobs" element={<JobOffersPage/>} />
                     <Route path="/onboarding" element={<div>Onboarding Page</div>} />
                     <Route path="/offboarding" element={<div>Offboarding Page</div>} />
@@ -35,6 +37,7 @@ const App = () => {
                     <Route path="/performance" element={<div>Performance Management Page</div>} />
                     <Route path="/account-details" element={<AccountDetailsPage />} />
                     <Route path="/feedback" element={<FeedbackFormPage />} />
+                    <Route path="/subordinates-absences" element={<SubordinatesAbsenceApprovalPage />} />
                 </Route>
                 <Route element={<ProtectedRouteHR />}>
                     <Route path="/hr-payrolls" element={<HRPayrollPage />} />

@@ -16,7 +16,12 @@ import {
     TextField,
     Button,
     Snackbar,
-    Alert
+    Alert,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle
 } from '@mui/material';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
@@ -35,6 +40,8 @@ const AllAccountsDetailsPage = () => {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [grossPay, setGrossPay] = useState('');
     const [editingGrossPay, setEditingGrossPay] = useState(null);
+    const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+    const [errorDialogMessage, setErrorDialogMessage] = useState('');
     const theme = useTheme();
 
     const fetchAllUsers = async () => {
@@ -132,11 +139,21 @@ const AllAccountsDetailsPage = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
+            await axios.post(`http://localhost:8080/api/users/set-manager`, null, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                params: {
+                    userEmail: userEmail,
+                    managerEmail: editedDetails.managerEmail // Ensure this value is set in editedDetails
+                }
+            });
             setEditIndex(null);
             fetchAllUsers();
             setSnackbarOpen(true);
         } catch (err) {
-            setError('Failed to update personal details');
+            setErrorDialogMessage('Failed to update personal details or manager');
+            setErrorDialogOpen(true);
             console.error(err);
         }
     };
@@ -153,13 +170,18 @@ const AllAccountsDetailsPage = () => {
             fetchAllUsers();
             setSnackbarOpen(true);
         } catch (err) {
-            setError('Failed to update gross pay');
+            setErrorDialogMessage('Failed to update gross pay');
+            setErrorDialogOpen(true);
             console.error(err);
         }
     };
 
     const handleCloseSnackbar = () => {
         setSnackbarOpen(false);
+    };
+
+    const handleCloseErrorDialog = () => {
+        setErrorDialogOpen(false);
     };
 
     const filteredUsers = handleSearch();
@@ -203,13 +225,14 @@ const AllAccountsDetailsPage = () => {
                                     <TableCell sx={{ minWidth: 150 }}>Identity Card</TableCell>
                                     <TableCell sx={{ minWidth: 150 }}>Identity Card Series</TableCell>
                                     <TableCell sx={{ minWidth: 150 }}>Identity Card Number</TableCell>
-                                    <TableCell sx={{ minWidth: 150 }}>Gross Pay</TableCell> {/* New Column */}
+                                    <TableCell sx={{ minWidth: 150 }}>Gross Pay</TableCell>
                                     <TableCell sx={{ minWidth: 150 }}>Registered By</TableCell>
                                     <TableCell sx={{ minWidth: 150 }}>Registration Date</TableCell>
                                     <TableCell sx={{ minWidth: 150 }}>Company Position</TableCell>
                                     <TableCell sx={{ minWidth: 150 }}>Contract Number</TableCell>
                                     <TableCell sx={{ minWidth: 150 }}>Contract Start Date</TableCell>
                                     <TableCell sx={{ minWidth: 150 }}>Department</TableCell>
+                                    <TableCell sx={{ minWidth: 150 }}>Manager</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -448,6 +471,18 @@ const AllAccountsDetailsPage = () => {
                                             ) : (user.personalDetails?.department || 'N/A'
                                             )}
                                         </TableCell>
+                                        <TableCell>
+                                            {editIndex === index ? (
+                                                <TextField
+                                                    name="managerEmail"
+                                                    value={editedDetails.managerEmail || ''}
+                                                    onChange={handleInputChange}
+                                                    fullWidth
+                                                />
+                                            ) : (
+                                                user.managerEmail || 'N/A'
+                                            )}
+                                        </TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -472,6 +507,15 @@ const AllAccountsDetailsPage = () => {
                         Detail successfully updated!
                     </Alert>
                 </Snackbar>
+                <Dialog open={errorDialogOpen} onClose={handleCloseErrorDialog}>
+                    <DialogTitle>Error</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>{errorDialogMessage}</DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseErrorDialog} color="primary">Close</Button>
+                    </DialogActions>
+                </Dialog>
             </Box>
         </Box>
     );
