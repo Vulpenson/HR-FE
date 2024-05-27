@@ -15,6 +15,7 @@ import ViewFeedbacksPage from "./pages/ViewFeedbacksPage";
 import JobOffersPage from "./pages/JobOffersPage";
 import JobOfferFormPage from "./pages/JobOfferFormPage";
 import JobOfferHRMode from "./pages/JobOfferHRMode";
+import AbsencesPage from "./pages/AbsencesPage";
 
 const App = () => {
     return (
@@ -27,7 +28,7 @@ const App = () => {
                 <Route element={<ProtectedRoute />}>
                     <Route path="/mainpage" element={<Dashboard />} />
                     <Route path="/payroll" element={<PayrollPage />} />
-                    <Route path="/absences" element={<div>Absences Page</div>} />
+                    <Route path="/absences" element={<AbsencesPage />} />
                     <Route path="/jobs" element={<JobOffersPage/>} />
                     <Route path="/onboarding" element={<div>Onboarding Page</div>} />
                     <Route path="/offboarding" element={<div>Offboarding Page</div>} />
