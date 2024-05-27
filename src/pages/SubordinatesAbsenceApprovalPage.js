@@ -13,38 +13,75 @@ import {
     TableHead,
     TableRow,
     Paper,
+    IconButton,
 } from '@mui/material';
 import { useUser } from '../context/UserContext';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
+import WarningIcon from '@mui/icons-material/Warning';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { format, parse, startOfWeek, getDay, isSameDay } from 'date-fns';
+
+const locales = {
+    'en-US': require('date-fns/locale/en-US'),
+};
+
+const localizer = dateFnsLocalizer({
+    format,
+    parse,
+    startOfWeek,
+    getDay,
+    locales,
+});
 
 const SubordinatesAbsenceApprovalPage = () => {
     const { token } = useUser();
+    const [subordinates, setSubordinates] = useState([]);
+    const [selectedSubordinate, setSelectedSubordinate] = useState(null);
     const [absences, setAbsences] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
 
-    const fetchSubordinatesAbsences = async () => {
+    const fetchSubordinates = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/api/absences/subordinates', {
+            const response = await axios.get('http://localhost:8080/api/users/subordinates', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            setAbsences(response.data);
+            console.log("Fetched subordinates:", response.data);
+            setSubordinates(response.data);
             setLoading(false);
         } catch (err) {
-            setError('Failed to fetch absences');
+            console.error('Failed to fetch subordinates:', err);
+            setError('Failed to fetch subordinates');
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchSubordinatesAbsences();
+        fetchSubordinates();
     }, []);
+
+    const fetchSubordinateAbsences = async (subordinateEmail) => {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/absences/user/${subordinateEmail}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setSelectedSubordinate(subordinateEmail);
+            setAbsences(response.data);
+        } catch (err) {
+            setError('Failed to fetch absences');
+            throw err;
+        }
+    };
 
     const handleApprove = async (absenceId) => {
         try {
@@ -59,7 +96,7 @@ const SubordinatesAbsenceApprovalPage = () => {
             );
             setSuccessMessage('Absence approved successfully!');
             setSnackbarOpen(true);
-            fetchSubordinatesAbsences();
+            fetchSubordinates(); // Refresh the subordinates list
         } catch (err) {
             setError('Failed to approve absence');
             console.error(err);
@@ -68,6 +105,21 @@ const SubordinatesAbsenceApprovalPage = () => {
 
     const handleCloseSnackbar = () => {
         setSnackbarOpen(false);
+    };
+
+    const eventPropGetter = (event) => {
+        const backgroundColor = event.approved ? 'rgba(0, 128, 0, 0.7)' : 'rgba(128,128,128,0.44)';
+        const borderColor = event.approved ? 'green' : 'gray';
+        const color = 'white';
+        const borderStyle = 'solid';
+        return {
+            style: {
+                backgroundColor,
+                borderColor,
+                color,
+                borderStyle
+            }
+        };
     };
 
     if (loading) return <CircularProgress />;
@@ -79,43 +131,65 @@ const SubordinatesAbsenceApprovalPage = () => {
             <Sidebar />
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <div style={{ height: 64 }} /> {/* This is to account for the navbar height */}
-                <Typography variant="h4" gutterBottom>Approve Subordinates' Absences</Typography>
-                <TableContainer component={Paper}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Employee</TableCell>
-                                <TableCell>Type</TableCell>
-                                <TableCell>Start Date</TableCell>
-                                <TableCell>End Date</TableCell>
-                                <TableCell>Status</TableCell>
-                                <TableCell>Action</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {absences.map((absence) => (
-                                <TableRow key={absence.id}>
-                                    <TableCell>{absence.user.email}</TableCell>
-                                    <TableCell>{absence.type.replace(/_/g, ' ').toLowerCase()}</TableCell>
-                                    <TableCell>{absence.startDate}</TableCell>
-                                    <TableCell>{absence.endDate}</TableCell>
-                                    <TableCell>{absence.approved ? 'Approved' : 'Pending'}</TableCell>
-                                    <TableCell>
-                                        {!absence.approved && (
+                <Typography variant="h4" gutterBottom>Subordinates</Typography>
+                {!selectedSubordinate ? (
+                    <TableContainer component={Paper}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Email</TableCell>
+                                    <TableCell>Unapproved Absences</TableCell>
+                                    <TableCell>Action</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {subordinates.map((subordinate) => (
+                                    <TableRow key={subordinate}>
+                                        <TableCell>{subordinate}</TableCell>
+                                        <TableCell>
+                                            {subordinate.hasUnapprovedAbsence ? (
+                                                <WarningIcon color="error" />
+                                            ) : (
+                                                <CheckCircleIcon color="success" />
+                                            )}
+                                        </TableCell>
+                                        <TableCell>
                                             <Button
                                                 variant="contained"
                                                 color="primary"
-                                                onClick={() => handleApprove(absence.id)}
+                                                onClick={() => fetchSubordinateAbsences(subordinate)}
                                             >
-                                                Approve
+                                                View Absences
                                             </Button>
-                                        )}
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                ) : (
+                    <Box>
+                        <Button variant="contained" onClick={() => setSelectedSubordinate(null)}>
+                            Back to Subordinates List
+                        </Button>
+                        <Typography variant="h5" gutterBottom>
+                            Absences for {selectedSubordinate}
+                        </Typography>
+                        <Calendar
+                            localizer={localizer}
+                            events={absences.map(absence => ({
+                                ...absence,
+                                start: new Date(absence.startDate),
+                                end: new Date(absence.endDate),
+                                title: absence.type.replace(/_/g, ' ').toLowerCase()
+                            }))}
+                            startAccessor="start"
+                            endAccessor="end"
+                            style={{ height: 500, margin: '50px' }}
+                            eventPropGetter={eventPropGetter}
+                        />
+                    </Box>
+                )}
                 <Snackbar
                     open={snackbarOpen}
                     autoHideDuration={6000}
