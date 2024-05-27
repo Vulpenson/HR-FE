@@ -18,7 +18,6 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    IconButton,
 } from '@mui/material';
 import { useUser } from '../context/UserContext';
 import axios from 'axios';
@@ -63,8 +62,20 @@ const SubordinatesAbsenceApprovalPage = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            console.log("Fetched subordinates:", response.data);
-            setSubordinates(response.data);
+
+            const subordinatesWithUnapprovedStatus = await Promise.all(
+                response.data.map(async (email) => {
+                    const hasUnapprovedAbsenceResponse = await axios.get(`http://localhost:8080/api/absences/has-unapproved/${email}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+                    return { email, hasUnapprovedAbsence: hasUnapprovedAbsenceResponse.data };
+                })
+            );
+
+            console.log("Fetched subordinates with unapproved status:", subordinatesWithUnapprovedStatus);
+            setSubordinates(subordinatesWithUnapprovedStatus);
             setLoading(false);
         } catch (err) {
             console.error('Failed to fetch subordinates:', err);
@@ -106,6 +117,7 @@ const SubordinatesAbsenceApprovalPage = () => {
             setSuccessMessage('Absence approved successfully!');
             setSnackbarOpen(true);
             fetchSubordinateAbsences(selectedSubordinate); // Refresh the absences list
+            fetchSubordinates(); // Refresh the subordinates list
         } catch (err) {
             setError('Failed to approve absence');
             console.error(err);
@@ -122,6 +134,7 @@ const SubordinatesAbsenceApprovalPage = () => {
             setSuccessMessage('Absence deleted successfully!');
             setSnackbarOpen(true);
             fetchSubordinateAbsences(selectedSubordinate); // Refresh the absences list
+            fetchSubordinates(); // Refresh the subordinates list
         } catch (err) {
             setError('Failed to delete absence');
             console.error(err);
@@ -202,8 +215,8 @@ const SubordinatesAbsenceApprovalPage = () => {
                                 </TableHead>
                                 <TableBody>
                                     {subordinates.map((subordinate) => (
-                                        <TableRow key={subordinate}>
-                                            <TableCell>{subordinate}</TableCell>
+                                        <TableRow key={subordinate.email}>
+                                            <TableCell>{subordinate.email}</TableCell>
                                             <TableCell>
                                                 {subordinate.hasUnapprovedAbsence ? (
                                                     <WarningIcon color="error" />
@@ -215,7 +228,7 @@ const SubordinatesAbsenceApprovalPage = () => {
                                                 <Button
                                                     variant="contained"
                                                     color="primary"
-                                                    onClick={() => fetchSubordinateAbsences(subordinate)}
+                                                    onClick={() => fetchSubordinateAbsences(subordinate.email)}
                                                 >
                                                     View Absences
                                                 </Button>
