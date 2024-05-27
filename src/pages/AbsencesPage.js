@@ -19,6 +19,7 @@ import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay, isSameDay } from 'date-fns';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useUser } from '../context/UserContext';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
@@ -62,6 +63,8 @@ const AbsencesPage = () => {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [anchorPosition, setAnchorPosition] = useState(null);
+    const [hasSubordinates, setHasSubordinates] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchAbsences = async () => {
@@ -84,7 +87,23 @@ const AbsencesPage = () => {
             }
         };
 
+        const checkForSubordinates = async () => {
+            try {
+                const response = await axios.get('http://localhost:8080/api/users/subordinates', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+                if (response.data.length > 0) {
+                    setHasSubordinates(true);
+                }
+            } catch (err) {
+                console.error('Failed to check for subordinates', err);
+            }
+        };
+
         fetchAbsences();
+        checkForSubordinates();
     }, [token]);
 
     const handleSelectSlot = ({ start, end }) => {
@@ -247,6 +266,7 @@ const AbsencesPage = () => {
             <Box sx={{ display: 'flex', flexGrow: 1, overflow: 'hidden' }}>
                 <Sidebar />
                 <Box component="main" sx={{ flexGrow: 1, p: 3, display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ height: 64 }} /> {/* This is to account for the navbar height */}
                     <Typography variant="h4" gutterBottom>Absences</Typography>
                     <Button
                         variant="contained"
@@ -257,6 +277,16 @@ const AbsencesPage = () => {
                     >
                         Select Absence Type
                     </Button>
+                    {hasSubordinates && (
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={() => navigate('/subordinates-absences')}
+                            sx={{ alignSelf: 'flex-start', mb: 0, ml: 0 }}
+                        >
+                            Approve Subordinates' Absences
+                        </Button>
+                    )}
                     <Calendar
                         localizer={localizer}
                         events={events}
