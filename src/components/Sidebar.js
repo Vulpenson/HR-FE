@@ -29,7 +29,6 @@ const Sidebar = () => {
         ...(user && user.offboarding ? [{ name: 'Offboarding', icon: <ExitToAppIcon />, path: '/offboarding' }] : []),
         { name: 'Employee Engagement', icon: <EmojiEventsIcon />, path: '/feedback' },
         { name: 'Employee Self-Service', icon: <SelfImprovementIcon />, path: '/self-service' },
-        { name: 'Performance Management', icon: <WorkIcon />, path: '/performance' },
     ];
 
     if (user && (user.role === 'ROLE_HR' || user.role === 'ROLE_ADMIN')) {
