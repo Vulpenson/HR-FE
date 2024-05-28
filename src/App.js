@@ -18,6 +18,9 @@ import JobOfferHRMode from "./pages/JobOfferHRMode";
 import AbsencesPage from "./pages/AbsencesPage";
 import SubordinatesAbsenceApprovalPage from "./pages/SubordinatesAbsenceApprovalPage";
 import OnboardingStatusPage from "./pages/OnboardingStatusPage";
+import ResetPassword from "./pages/ResetPassword";
+import RequestPasswordReset from "./pages/RequestPasswordReset";
+import SelfService from "./pages/SelfService";
 
 const App = () => {
     return (
@@ -25,6 +28,8 @@ const App = () => {
             <Routes>
                 <Route path="/signin" element={<SignIn />} />
                 <Route path="/signup" element={<SignUp />} />
+                <Route path="/request-password-reset" element={<RequestPasswordReset />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/" element={<Navigate replace to="/signin" />} />
                 {/* Wrap all protected routes inside a single ProtectedRoute */}
                 <Route element={<ProtectedRoute />}>
@@ -34,7 +39,7 @@ const App = () => {
                     <Route path="/jobs" element={<JobOffersPage/>} />
                     <Route path="/onboarding" element={<OnboardingStatusPage />} />
                     <Route path="/offboarding" element={<div>Offboarding Page</div>} />
-                    <Route path="/self-service" element={<div>Self Service Page</div>} />
+                    <Route path="/self-service" element={<SelfService />} />
                     <Route path="/performance" element={<div>Performance Management Page</div>} />
                     <Route path="/account-details" element={<AccountDetailsPage />} />
                     <Route path="/feedback" element={<FeedbackFormPage />} />
