@@ -7,6 +7,8 @@ import {
     TextField,
     Typography,
     CircularProgress,
+    Snackbar,
+    Alert,
 } from '@mui/material';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
@@ -19,6 +21,9 @@ const SelfService = () => {
     const [templateName, setTemplateName] = useState('');
     const [file, setFile] = useState(null);
     const { token, user } = useUser();
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState('error');
 
     const handleFillPdfTemplate = async () => {
         setLoading(true);
@@ -39,6 +44,9 @@ const SelfService = () => {
             link.click();
         } catch (error) {
             console.error('Error filling PDF template:', error);
+            setSnackbarMessage('Error filling PDF template: ' + error.message);
+            setSnackbarSeverity('error');
+            setSnackbarOpen(true);
         } finally {
             setLoading(false);
         }
@@ -58,9 +66,14 @@ const SelfService = () => {
                 },
             });
             alert('Template uploaded successfully!');
+            setSnackbarMessage('Template uploaded successfully!');
+            setSnackbarSeverity('success');
+            setSnackbarOpen(true);
         } catch (error) {
             console.error('Error uploading template:', error);
-            alert('Failed to upload template.');
+            setSnackbarMessage('Error uploading template: ' + error.message);
+            setSnackbarSeverity('error');
+            setSnackbarOpen(true);
         } finally {
             setLoading(false);
         }
@@ -84,9 +97,16 @@ const SelfService = () => {
             link.click();
         } catch (error) {
             console.error('Error downloading PDF template:', error);
+            setSnackbarMessage('Error downloading PDF template: ' + error.message);
+            setSnackbarSeverity('error');
+            setSnackbarOpen(true);
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleCloseSnackbar = () => {
+        setSnackbarOpen(false);
     };
 
     const hasRole = (roles) => {
@@ -125,6 +145,19 @@ const SelfService = () => {
                                 {loading ? <CircularProgress size={24} /> : 'Fill PDF Template'}
                             </Button>
                         </Box>
+                        <Box className="card">
+                            <Typography variant="h6" gutterBottom>
+                                Download PDF Template
+                            </Typography>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleDownloadTemplate}
+                                disabled={loading}
+                            >
+                                {loading ? <CircularProgress size={24} /> : 'Download Template'}
+                            </Button>
+                        </Box>
                         {hasRole(['ROLE_ADMIN', 'ROLE_HR']) && (
                             <>
                                 <Box className="card">
@@ -154,24 +187,20 @@ const SelfService = () => {
                                         {loading ? <CircularProgress size={24} /> : 'Upload Template'}
                                     </Button>
                                 </Box>
-                                <Box className="card">
-                                    <Typography variant="h6" gutterBottom>
-                                        Download PDF Template
-                                    </Typography>
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={handleDownloadTemplate}
-                                        disabled={loading}
-                                    >
-                                        {loading ? <CircularProgress size={24} /> : 'Download Template'}
-                                    </Button>
-                                </Box>
                             </>
                         )}
                     </Container>
                 </Box>
             </Box>
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };

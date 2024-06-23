@@ -21,7 +21,8 @@ import {
     DialogActions,
     DialogContent,
     DialogContentText,
-    DialogTitle
+    DialogTitle,
+    Container
 } from '@mui/material';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
@@ -205,299 +206,301 @@ const AllAccountsDetailsPage = () => {
                     fullWidth
                     sx={{ mb: 2, maxWidth: '25%' }}
                 />
-                <Paper sx={{ p: 3, maxWidth: '50%', overflowX: 'auto' }}>
-                    <TableContainer>
-                        <Table stickyHeader>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell sx={{ minWidth: 120 }}>Actions</TableCell>
-                                    <TableCell sx={{ minWidth: 120 }}>First Name</TableCell>
-                                    <TableCell sx={{ minWidth: 120 }}>Last Name</TableCell>
-                                    <TableCell sx={{ minWidth: 200 }}>Email</TableCell>
-                                    <TableCell sx={{ minWidth: 120 }}>Role</TableCell>
-                                    <TableCell sx={{ minWidth: 150 }}>Phone Number</TableCell>
-                                    <TableCell sx={{ minWidth: 200 }}>Address</TableCell>
-                                    <TableCell sx={{ minWidth: 120 }}>City</TableCell>
-                                    <TableCell sx={{ minWidth: 120 }}>Country</TableCell>
-                                    <TableCell sx={{ minWidth: 120 }}>Postal Code</TableCell>
-                                    <TableCell sx={{ minWidth: 120 }}>Bank</TableCell>
-                                    <TableCell sx={{ minWidth: 150 }}>Bank Account</TableCell>
-                                    <TableCell sx={{ minWidth: 150 }}>Identity Card</TableCell>
-                                    <TableCell sx={{ minWidth: 150 }}>Identity Card Series</TableCell>
-                                    <TableCell sx={{ minWidth: 150 }}>Identity Card Number</TableCell>
-                                    <TableCell sx={{ minWidth: 150 }}>Gross Pay</TableCell>
-                                    <TableCell sx={{ minWidth: 150 }}>Registered By</TableCell>
-                                    <TableCell sx={{ minWidth: 150 }}>Registration Date</TableCell>
-                                    <TableCell sx={{ minWidth: 150 }}>Company Position</TableCell>
-                                    <TableCell sx={{ minWidth: 150 }}>Contract Number</TableCell>
-                                    <TableCell sx={{ minWidth: 150 }}>Contract Start Date</TableCell>
-                                    <TableCell sx={{ minWidth: 150 }}>Department</TableCell>
-                                    <TableCell sx={{ minWidth: 150 }}>Manager</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {paginatedUsers.map((user, index) => (
-                                    <TableRow key={user.email}>
-                                        <TableCell>
-                                            {editIndex === index ? (
-                                                <>
-                                                    <Button onClick={() => handleSave(index, user.email)} color="primary">
-                                                        Save
-                                                    </Button>
-                                                    <Button onClick={() => handleEditToggle(index)} color="secondary">
-                                                        Cancel
-                                                    </Button>
-                                                </>
-                                            ) : (
-                                                <Button onClick={() => handleEditToggle(index)} color="primary">
-                                                    Edit
-                                                </Button>
-                                            )}
-                                        </TableCell>
-                                        <TableCell>{user.firstName}</TableCell>
-                                        <TableCell>{user.lastName}</TableCell>
-                                        <TableCell>{user.email}</TableCell>
-                                        <TableCell>{user.role}</TableCell>
-                                        <TableCell>
-                                            {editIndex === index ? (
-                                                <TextField
-                                                    name="phoneNumber"
-                                                    value={editedDetails.phoneNumber || ''}
-                                                    onChange={handleInputChange}
-                                                    fullWidth
-                                                />
-                                            ) : (
-                                                user.personalDetails?.phoneNumber || 'N/A'
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {editIndex === index ? (
-                                                <TextField
-                                                    name="address"
-                                                    value={editedDetails.address || ''}
-                                                    onChange={handleInputChange}
-                                                    fullWidth
-                                                />
-                                            ) : (
-                                                user.personalDetails?.address || 'N/A'
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {editIndex === index ? (
-                                                <TextField
-                                                    name="city"
-                                                    value={editedDetails.city || ''}
-                                                    onChange={handleInputChange}
-                                                    fullWidth
-                                                />
-                                            ) : (
-                                                user.personalDetails?.city || 'N/A'
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {editIndex === index ? (
-                                                <TextField
-                                                    name="country"
-                                                    value={editedDetails.country || ''}
-                                                    onChange={handleInputChange}
-                                                    fullWidth
-                                                />
-                                            ) : (
-                                                user.personalDetails?.country || 'N/A'
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {editIndex === index ? (
-                                                <TextField
-                                                    name="postalCode"
-                                                    value={editedDetails.postalCode || ''}
-                                                    onChange={handleInputChange}
-                                                    fullWidth
-                                                />
-                                            ) : (
-                                                user.personalDetails?.postalCode || 'N/A'
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {editIndex === index ? (
-                                                <TextField
-                                                    name="bank"
-                                                    value={editedDetails.bank || ''}
-                                                    onChange={handleInputChange}
-                                                    fullWidth
-                                                />
-                                            ) : (
-                                                user.personalDetails?.bank || 'N/A'
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {editIndex === index ? (
-                                                <TextField
-                                                    name="bankAccount"
-                                                    value={editedDetails.bankAccount || ''}
-                                                    onChange={handleInputChange}
-                                                    fullWidth
-                                                />
-                                            ) : (
-                                                user.personalDetails?.bankAccount || 'N/A'
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {editIndex === index ? (
-                                                <TextField
-                                                    name="identityCard"
-                                                    value={editedDetails.identityCard || ''}
-                                                    onChange={handleInputChange}
-                                                    fullWidth
-                                                />
-                                            ) : (
-                                                user.personalDetails?.identityCard || 'N/A'
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {editIndex === index ? (
-                                                <TextField
-                                                    name="identityCardSeries"
-                                                    value={editedDetails.identityCardSeries || ''}
-                                                    onChange={handleInputChange}
-                                                    fullWidth
-                                                />
-                                            ) : (
-                                                user.personalDetails?.identityCardSeries || 'N/A'
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {editIndex === index ? (
-                                                <TextField
-                                                    name="identityCardNumber"
-                                                    value={editedDetails.identityCardNumber || ''}
-                                                    onChange={handleInputChange}
-                                                    fullWidth
-                                                />
-                                            ) : (
-                                                user.personalDetails?.identityCardNumber || 'N/A'
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {editingGrossPay === index ? (
-                                                <>
-                                                    <TextField
-                                                        name="grossPay"
-                                                        value={grossPay}
-                                                        onChange={handleGrossPayChange}
-                                                        fullWidth
-                                                    />
-                                                    <Button onClick={() => handleGrossPaySave(user.email)} color="primary">
-                                                        Save
-                                                    </Button>
-                                                    <Button onClick={() => handleGrossPayEditToggle(index)} color="secondary">
-                                                        Cancel
-                                                    </Button>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    {user.grossPay || 'N/A'}
-                                                    <Button onClick={() => handleGrossPayEditToggle(index, user.grossPay)} color="primary">
+                <Container maxWidth="xl">
+                    <Paper sx={{ p: 3, overflowX: 'auto' }}>
+                        <TableContainer>
+                            <Table stickyHeader>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell sx={{ minWidth: 120 }}>Actions</TableCell>
+                                        <TableCell sx={{ minWidth: 120 }}>First Name</TableCell>
+                                        <TableCell sx={{ minWidth: 120 }}>Last Name</TableCell>
+                                        <TableCell sx={{ minWidth: 200 }}>Email</TableCell>
+                                        <TableCell sx={{ minWidth: 120 }}>Role</TableCell>
+                                        <TableCell sx={{ minWidth: 150 }}>Phone Number</TableCell>
+                                        <TableCell sx={{ minWidth: 200 }}>Address</TableCell>
+                                        <TableCell sx={{ minWidth: 120 }}>City</TableCell>
+                                        <TableCell sx={{ minWidth: 120 }}>Country</TableCell>
+                                        <TableCell sx={{ minWidth: 120 }}>Postal Code</TableCell>
+                                        <TableCell sx={{ minWidth: 120 }}>Bank</TableCell>
+                                        <TableCell sx={{ minWidth: 150 }}>Bank Account</TableCell>
+                                        <TableCell sx={{ minWidth: 150 }}>Identity Card</TableCell>
+                                        <TableCell sx={{ minWidth: 150 }}>Identity Card Series</TableCell>
+                                        <TableCell sx={{ minWidth: 150 }}>Identity Card Number</TableCell>
+                                        <TableCell sx={{ minWidth: 150 }}>Gross Pay</TableCell>
+                                        <TableCell sx={{ minWidth: 150 }}>Registered By</TableCell>
+                                        <TableCell sx={{ minWidth: 150 }}>Registration Date</TableCell>
+                                        <TableCell sx={{ minWidth: 150 }}>Company Position</TableCell>
+                                        <TableCell sx={{ minWidth: 150 }}>Contract Number</TableCell>
+                                        <TableCell sx={{ minWidth: 150 }}>Contract Start Date</TableCell>
+                                        <TableCell sx={{ minWidth: 150 }}>Department</TableCell>
+                                        <TableCell sx={{ minWidth: 150 }}>Manager</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {paginatedUsers.map((user, index) => (
+                                        <TableRow key={user.email}>
+                                            <TableCell>
+                                                {editIndex === index ? (
+                                                    <>
+                                                        <Button onClick={() => handleSave(index, user.email)} color="primary">
+                                                            Save
+                                                        </Button>
+                                                        <Button onClick={() => handleEditToggle(index)} color="secondary">
+                                                            Cancel
+                                                        </Button>
+                                                    </>
+                                                ) : (
+                                                    <Button onClick={() => handleEditToggle(index)} color="primary">
                                                         Edit
                                                     </Button>
-                                                </>
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {editIndex === index ? (
-                                                <TextField
-                                                    name="registeredBy"
-                                                    value={editedDetails.registeredBy || ''}
-                                                    onChange={handleInputChange}
-                                                    fullWidth
-                                                />
-                                            ) : (
-                                                user.personalDetails?.registeredBy || 'N/A'
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {editIndex === index ? (
-                                                <TextField
-                                                    name="registrationDate"
-                                                    value={editedDetails.registrationDate || ''}
-                                                    onChange={handleInputChange}
-                                                    fullWidth
-                                                />
-                                            ) : (
-                                                user.personalDetails?.registrationDate || 'N/A'
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {editIndex === index ? (
-                                                <TextField
-                                                    name="companyPosition"
-                                                    value={editedDetails.companyPosition || ''}
-                                                    onChange={handleInputChange}
-                                                    fullWidth
-                                                />
-                                            ) : (user.personalDetails?.companyPosition || 'N/A'
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {editIndex === index ? (
-                                                <TextField
-                                                    name="contractNumber"
-                                                    value={editedDetails.contractNumber || ''}
-                                                    onChange={handleInputChange}
-                                                    fullWidth
-                                                />
-                                            ) : (user.personalDetails?.contractNumber || 'N/A'
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {editIndex === index ? (
-                                                <TextField
-                                                    name="contractStartDate"
-                                                    value={editedDetails.contractStartDate || ''}
-                                                    onChange={handleInputChange}
-                                                    fullWidth
-                                                />
-                                            ) : (user.personalDetails?.contractStartDate || 'N/A'
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {editIndex === index ? (
-                                                <TextField
-                                                    name="department"
-                                                    value={editedDetails.department || ''}
-                                                    onChange={handleInputChange}
-                                                    fullWidth
-                                                />
-                                            ) : (user.personalDetails?.department || 'N/A'
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {editIndex === index ? (
-                                                <TextField
-                                                    name="managerEmail"
-                                                    value={editedDetails.managerEmail || ''}
-                                                    onChange={handleInputChange}
-                                                    fullWidth
-                                                />
-                                            ) : (
-                                                user.managerEmail || 'N/A'
-                                            )}
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        component="div"
-                        count={filteredUsers.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                </Paper>
+                                                )}
+                                            </TableCell>
+                                            <TableCell>{user.firstName}</TableCell>
+                                            <TableCell>{user.lastName}</TableCell>
+                                            <TableCell>{user.email}</TableCell>
+                                            <TableCell>{user.role}</TableCell>
+                                            <TableCell>
+                                                {editIndex === index ? (
+                                                    <TextField
+                                                        name="phoneNumber"
+                                                        value={editedDetails.phoneNumber || ''}
+                                                        onChange={handleInputChange}
+                                                        fullWidth
+                                                    />
+                                                ) : (
+                                                    user.personalDetails?.phoneNumber || 'N/A'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {editIndex === index ? (
+                                                    <TextField
+                                                        name="address"
+                                                        value={editedDetails.address || ''}
+                                                        onChange={handleInputChange}
+                                                        fullWidth
+                                                    />
+                                                ) : (
+                                                    user.personalDetails?.address || 'N/A'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {editIndex === index ? (
+                                                    <TextField
+                                                        name="city"
+                                                        value={editedDetails.city || ''}
+                                                        onChange={handleInputChange}
+                                                        fullWidth
+                                                    />
+                                                ) : (
+                                                    user.personalDetails?.city || 'N/A'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {editIndex === index ? (
+                                                    <TextField
+                                                        name="country"
+                                                        value={editedDetails.country || ''}
+                                                        onChange={handleInputChange}
+                                                        fullWidth
+                                                    />
+                                                ) : (
+                                                    user.personalDetails?.country || 'N/A'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {editIndex === index ? (
+                                                    <TextField
+                                                        name="postalCode"
+                                                        value={editedDetails.postalCode || ''}
+                                                        onChange={handleInputChange}
+                                                        fullWidth
+                                                    />
+                                                ) : (
+                                                    user.personalDetails?.postalCode || 'N/A'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {editIndex === index ? (
+                                                    <TextField
+                                                        name="bank"
+                                                        value={editedDetails.bank || ''}
+                                                        onChange={handleInputChange}
+                                                        fullWidth
+                                                    />
+                                                ) : (
+                                                    user.personalDetails?.bank || 'N/A'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {editIndex === index ? (
+                                                    <TextField
+                                                        name="bankAccount"
+                                                        value={editedDetails.bankAccount || ''}
+                                                        onChange={handleInputChange}
+                                                        fullWidth
+                                                    />
+                                                ) : (
+                                                    user.personalDetails?.bankAccount || 'N/A'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {editIndex === index ? (
+                                                    <TextField
+                                                        name="identityCard"
+                                                        value={editedDetails.identityCard || ''}
+                                                        onChange={handleInputChange}
+                                                        fullWidth
+                                                    />
+                                                ) : (
+                                                    user.personalDetails?.identityCard || 'N/A'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {editIndex === index ? (
+                                                    <TextField
+                                                        name="identityCardSeries"
+                                                        value={editedDetails.identityCardSeries || ''}
+                                                        onChange={handleInputChange}
+                                                        fullWidth
+                                                    />
+                                                ) : (
+                                                    user.personalDetails?.identityCardSeries || 'N/A'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {editIndex === index ? (
+                                                    <TextField
+                                                        name="identityCardNumber"
+                                                        value={editedDetails.identityCardNumber || ''}
+                                                        onChange={handleInputChange}
+                                                        fullWidth
+                                                    />
+                                                ) : (
+                                                    user.personalDetails?.identityCardNumber || 'N/A'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {editingGrossPay === index ? (
+                                                    <>
+                                                        <TextField
+                                                            name="grossPay"
+                                                            value={grossPay}
+                                                            onChange={handleGrossPayChange}
+                                                            fullWidth
+                                                        />
+                                                        <Button onClick={() => handleGrossPaySave(user.email)} color="primary">
+                                                            Save
+                                                        </Button>
+                                                        <Button onClick={() => handleGrossPayEditToggle(index)} color="secondary">
+                                                            Cancel
+                                                        </Button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        {user.grossPay || 'N/A'}
+                                                        <Button onClick={() => handleGrossPayEditToggle(index, user.grossPay)} color="primary">
+                                                            Edit
+                                                        </Button>
+                                                    </>
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {editIndex === index ? (
+                                                    <TextField
+                                                        name="registeredBy"
+                                                        value={editedDetails.registeredBy || ''}
+                                                        onChange={handleInputChange}
+                                                        fullWidth
+                                                    />
+                                                ) : (
+                                                    user.personalDetails?.registeredBy || 'N/A'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {editIndex === index ? (
+                                                    <TextField
+                                                        name="registrationDate"
+                                                        value={editedDetails.registrationDate || ''}
+                                                        onChange={handleInputChange}
+                                                        fullWidth
+                                                    />
+                                                ) : (
+                                                    user.personalDetails?.registrationDate || 'N/A'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {editIndex === index ? (
+                                                    <TextField
+                                                        name="companyPosition"
+                                                        value={editedDetails.companyPosition || ''}
+                                                        onChange={handleInputChange}
+                                                        fullWidth
+                                                    />
+                                                ) : (user.personalDetails?.companyPosition || 'N/A'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {editIndex === index ? (
+                                                    <TextField
+                                                        name="contractNumber"
+                                                        value={editedDetails.contractNumber || ''}
+                                                        onChange={handleInputChange}
+                                                        fullWidth
+                                                    />
+                                                ) : (user.personalDetails?.contractNumber || 'N/A'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {editIndex === index ? (
+                                                    <TextField
+                                                        name="contractStartDate"
+                                                        value={editedDetails.contractStartDate || ''}
+                                                        onChange={handleInputChange}
+                                                        fullWidth
+                                                    />
+                                                ) : (user.personalDetails?.contractStartDate || 'N/A'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {editIndex === index ? (
+                                                    <TextField
+                                                        name="department"
+                                                        value={editedDetails.department || ''}
+                                                        onChange={handleInputChange}
+                                                        fullWidth
+                                                    />
+                                                ) : (user.personalDetails?.department || 'N/A'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {editIndex === index ? (
+                                                    <TextField
+                                                        name="managerEmail"
+                                                        value={editedDetails.managerEmail || ''}
+                                                        onChange={handleInputChange}
+                                                        fullWidth
+                                                    />
+                                                ) : (
+                                                    user.managerEmail || 'N/A'
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        <TablePagination
+                            rowsPerPageOptions={[5, 10, 25]}
+                            component="div"
+                            count={filteredUsers.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                    </Paper>
+                </Container>
                 <Snackbar
                     open={snackbarOpen}
                     autoHideDuration={6000}
